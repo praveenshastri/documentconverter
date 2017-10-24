@@ -21,8 +21,8 @@ public class DocumentService {
 	public boolean converXlsxToCSV(MultipartFile file){
 		try {
 			doConvertXlsxToCsv(file);
-		} catch (InvalidFormatException | IOException e) {
-			System.out.println("Error occurced while converting the document");
+		} catch (Exception e) {
+			System.out.println("Error occurced while converting the document "+e.getMessage());
 			return false;
 		}
 		return true;
@@ -30,10 +30,11 @@ public class DocumentService {
 	
 	private boolean doConvertXlsxToCsv(MultipartFile file) throws InvalidFormatException, IOException {
 		File outputDir = new File("output");
+		XSSFWorkbook workbook = null;
 		if(!outputDir.exists())
 			outputDir.mkdirs();		
-		XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 		try {
+			workbook = new XSSFWorkbook(file.getInputStream());
 			int sheets = workbook.getNumberOfSheets();
 			Cell cell;
 			Row row;
@@ -75,14 +76,15 @@ public class DocumentService {
 							data.append(cell + ",");
 						}
 					}
-					data.append("\n");
+					data.append("\n");					
 				}
 				fos = new FileOutputStream(new File(outputDir.getName()+File.separator+workbook.getSheetAt(i).getSheetName() + ".csv"));
 				fos.write(data.toString().getBytes());
 				fos.close();
 			}
 		} finally {
-			workbook.close();
+			if(workbook!=null)
+				workbook.close();
 		}
 		return true;
 	}

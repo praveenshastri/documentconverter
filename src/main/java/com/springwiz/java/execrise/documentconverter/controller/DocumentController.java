@@ -26,8 +26,7 @@ public class DocumentController {
 	@RequestMapping("/upload")
 	public String fileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response){
 		System.out.println("file.getContentType() >"+file.getContentType());
-		System.out.println("FileName > "+file.getOriginalFilename());
-		System.out.println("file.getContentType().toLowerCase() > "+file.getContentType().toLowerCase());
+		System.out.println("FileName > "+file.getOriginalFilename());	
 		boolean status;
 		String validationResult = validate(file); 
 		if(validationResult.equals("success")){
@@ -36,7 +35,7 @@ public class DocumentController {
 				return "File Uploaded Succesfully";
 			else{
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
-				return "Failed to Upload/Convert the file";
+				return "Failed to Convert the file to csv. Invlaid file content";
 			}
 		}else{
 			return validationResult;
